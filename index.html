@@ -12,14 +12,12 @@ body {
   margin: 0;
 }
 
-/* HEADER */
 .header {
   background: #020617;
   padding: 20px;
   text-align: center;
 }
 
-/* KPIs */
 .kpis {
   display: flex;
   justify-content: center;
@@ -33,12 +31,11 @@ body {
   border-radius: 10px;
 }
 
-/* FORM */
 .form {
   text-align: center;
 }
 
-input, select, button {
+input, button {
   margin: 5px;
   padding: 8px;
   border-radius: 5px;
@@ -50,14 +47,12 @@ button {
   color: white;
 }
 
-/* GRID */
 .grid {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
 }
 
-/* PANEL CARD */
 .card {
   background: #1e293b;
   margin: 10px;
@@ -66,7 +61,6 @@ button {
   border-radius: 10px;
 }
 
-/* ALERTA */
 .falla {
   border: 2px solid red;
   animation: parpadeo 0.8s infinite;
@@ -89,16 +83,14 @@ button {
 
 <div class="header">
   <h1>🌱 Alerta Verde AI</h1>
-  <p>Monitoreo inteligente para energía solar</p>
+  <p>Monitoreo inteligente con análisis de garantía</p>
 </div>
 
-<!-- KPIs -->
 <div class="kpis">
   <div class="kpi">⚡ Producción: <span id="prod">0</span> kWh</div>
   <div class="kpi">🚨 Alertas: <span id="alert">0</span></div>
 </div>
 
-<!-- FORM -->
 <div class="form">
   <input id="id" placeholder="ID">
   <input id="ubi" placeholder="Ubicación">
@@ -107,17 +99,15 @@ button {
   <input id="corr" placeholder="Corriente">
   <input id="eff" placeholder="Eficiencia">
 
-  <select id="gar">
-    <option value="si">Con garantía</option>
-    <option value="no">Sin garantía</option>
-  </select>
+  <br>
+  📅 Fecha instalación:
+  <input type="date" id="instalacion">
 
   <br>
   <button onclick="add()">➕ Agregar</button>
   <button onclick="run()">🚀 Analizar</button>
 </div>
 
-<!-- RESULTADOS -->
 <div class="grid" id="grid"></div>
 
 <script>
@@ -132,7 +122,7 @@ function add(){
     v: +volt.value,
     c: +corr.value,
     e: +eff.value,
-    g: gar.value
+    f: new Date(instalacion.value)
   });
   alert("Panel agregado");
 }
@@ -143,6 +133,8 @@ function run(){
 
   let prod = 0;
   let alertas = 0;
+
+  let hoy = new Date();
 
   data.forEach(p => {
 
@@ -191,12 +183,16 @@ function run(){
       reco="Limpiar panel";
     }
 
+    // 🛡️ GARANTÍA AUTOMÁTICA (5 años)
+    let años = (hoy - p.f) / (1000*60*60*24*365);
+    let enGarantia = años <= 5;
+
     let energia = estado==="Falla" ? Math.random()*10+5 : Math.random()*10+10;
     let costo = energia*0.15;
     let reparacion = estado==="Falla" ? Math.random()*200+50 : 0;
 
     let garantiaMsg = "";
-    if(p.g==="si" && estado==="Falla"){
+    if(enGarantia && estado==="Falla"){
       reparacion = 0;
       garantiaMsg="🛡️ Garantía activa";
       reco="Contactar proveedor";
@@ -217,6 +213,7 @@ function run(){
       <h3>Panel ${p.id}</h3>
       <p>📍 ${p.u}</p>
       <p>🕒 ${fecha}</p>
+      <p>📅 Instalación: ${p.f.toLocaleDateString()}</p>
 
       <p><b>${estado}</b></p>
       <p>${tipo}</p>
@@ -239,8 +236,8 @@ function run(){
 
   });
 
-  document.getElementById("prod").innerText = prod.toFixed(2);
-  document.getElementById("alert").innerText = alertas;
+  prod.innerText = prod.toFixed(2);
+  alert.innerText = alertas;
 }
 
 </script>
