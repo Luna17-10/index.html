@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Alerta Verde AI</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body {
+  font-family: Arial;
+  background: #0f172a;
+  color: white;
+  text-align: center;
+}
+
+.container {
+  padding: 20px;
+}
+
+.card {
+  background: #1e293b;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 10px;
+  display: inline-block;
+  width: 200px;
+}
+
+.alerta {
+  background: #7f1d1d;
+}
+
+.normal {
+  background: #14532d;
+}
+
+.panel {
+  background: #1e293b;
+  margin: 10px auto;
+  padding: 15px;
+  width: 300px;
+  border-radius: 10px;
+}
+</style>
+
+</head>
+<body>
+
+<h1>🌱 Alerta Verde AI</h1>
+<p>Monitoreo inteligente + análisis económico</p>
+
+<div class="container">
+
+<div class="card">
+<h3>Paneles</h3>
+<p>49</p>
+</div>
+
+<div class="card alerta">
+<h3>Fallas</h3>
+<p>500</p>
+</div>
+
+<div class="card">
+<h3>Pérdida Total</h3>
+<p>$1680.08</p>
+</div>
+
+<div class="card">
+<h3>Reparación</h3>
+<p>$66865.48</p>
+</div>
+
+</div>
+
+<h2>📊 Estado del sistema</h2>
+<canvas id="grafico" width="400" height="200"></canvas>
+
+<h2>🚨 Paneles</h2>
+<div id="paneles"></div>
+
+<script>
+
+const data = [{"panel_id":39,"estado_predicho":"Normal","energia_perdida":0.1999498316,"costo_perdida":0.0299924747,"costo_reparacion":0.0},{"panel_id":11,"estado_predicho":"Normal","energia_perdida":0.6084844859,"costo_perdida":0.0912726729,"costo_reparacion":0.0},{"panel_id":22,"estado_predicho":"Falla","energia_perdida":0.7649239825,"costo_perdida":0.1147385974,"costo_reparacion":0.0},{"panel_id":3,"estado_predicho":"Normal","energia_perdida":1.1265764357,"costo_perdida":0.1689864654,"costo_reparacion":0.0},{"panel_id":9,"estado_predicho":"Normal","energia_perdida":0.7821212151,"costo_perdida":0.1173181823,"costo_reparacion":0.0},{"panel_id":40,"estado_predicho":"Falla","energia_perdida":10.92725354,"costo_perdida":1.639088031,"costo_reparacion":188.9988298691},{"panel_id":31,"estado_predicho":"Normal","energia_perdida":0.5618690194,"costo_perdida":0.0842803529,"costo_reparacion":0.0},{"panel_id":45,"estado_predicho":"Normal","energia_perdida":15.9351075206,"costo_perdida":2.3902661281,"costo_reparacion":165.6905520029},{"panel_id":5,"estado_predicho":"Normal","energia_perdida":1.3376825053,"costo_perdida":0.2006523758,"costo_reparacion":0.0},{"panel_id":37,"estado_predicho":"Normal","energia_perdida":1.4264895744,"costo_perdida":0.2139734362,"costo_reparacion":0.0},{"panel_id":1,"estado_predicho":"Normal","energia_perdida":0.4034384047,"costo_perdida":0.0605157607,"costo_reparacion":0.0},{"panel_id":32,"estado_predicho":"Normal","energia_perdida":0.8207658461,"costo_perdida":0.1231148769,"costo_reparacion":0.0},{"panel_id":43,"estado_predicho":"Normal","energia_perdida":0.2109885197,"costo_perdida":0.0316482779,"costo_reparacion":0.0},{"panel_id":28,"estado_predicho":"Normal","energia_perdida":1.7921825998,"costo_perdida":0.26882739,"costo_reparacion":0.0},{"panel_id":39,"estado_predicho":"Normal","energia_perdida":1.0681788388,"costo_perdida":0.1602268258,"costo_reparacion":0.0},{"panel_id":37,"estado_predicho":"Normal","energia_perdida":1.116204004,"costo_perdida":0.1674306006,"costo_reparacion":0.0},{"panel_id":49,"estado_predicho":"Normal","energia_perdida":0.2961738599,"costo_perdida":0.044426079,"costo_reparacion":0.0},{"panel_id":17,"estado_predicho":"Normal","energia_perdida":1.0618691666,"costo_perdida":0.159280375,"costo_reparacion":0.0},{"panel_id":26,"estado_predicho":"Normal","energia_perdida":1.2646116612,"costo_perdida":0.1896917492,"costo_reparacion":0.0},{"panel_id":6,"estado_predicho":"Normal","energia_perdida":1.3916256136,"costo_perdida":0.208743842,"costo_reparacion":0.0},{"panel_id":3,"estado_predicho":"Normal","energia_perdida":1.2903455808,"costo_perdida":0.1935518371,"costo_reparacion":0.0},{"panel_id":41,"estado_predicho":"Normal","energia_perdida":1.7546787068,"costo_perdida":0.263201806,"costo_reparacion":0.0},{"panel_id":35,"estado_predicho":"Normal","energia_perdida":1.9925073995,"costo_perdida":0.2988761099,"costo_reparacion":0.0},{"panel_id":12,"estado_predicho":"Normal","energia_perdida":1.6933222845,"costo_perdida":0.2539983427,"costo_reparacion":0.0},{"panel_id":20,"estado_predicho":"Normal","energia_perdida":1.7971083771,"costo_perdida":0.2695662566,"costo_reparacion":0.0},{"panel_id":20,"estado_predicho":"Normal","energia_perdida":0.896848286,"costo_perdida":0.1345272429,"costo_reparacion":0.0},{"panel_id":41,"estado_predicho":"Normal","energia_perdida":0.6161215837,"costo_perdida":0.0924182376,"costo_reparacion":0.0},{"panel_id":48,"estado_predicho":"Normal","energia_perdida":0.7861954493,"costo_perdida":0.1179293174,"costo_reparacion":0.0},{"panel_id":8,"estado_predicho":"Normal","energia_perdida":0.3904859756,"costo_perdida":0.0585728963,"costo_reparacion":0.0},{"panel_id":48,"estado_predicho":"Falla","energia_perdida":19.4998222857,"costo_perdida":2.9249733428,"costo_reparacion":194.5429965634},{"panel_id":33,"estado_predicho":"Normal","energia_perdida":0.7453737342,"costo_perdida":0.1118060601,"costo_reparacion":0.0},{"panel_id":42,"estado_predicho":"Normal","energia_perdida":1.9801077002,"costo_perdida":0.297016155,"costo_reparacion":0.0},{"panel_id":2,"estado_predicho":"Normal","energia_perdida":1.4178219938,"costo_perdida":0.2126732991,"costo_reparacion":0.0},{"panel_id":39,"estado_predicho":"Normal","energia_perdida":1.0226847977,"costo_perdida":0.1534027197,"costo_reparacion":0.0},{"panel_id":36,"estado_predicho":"Normal","energia_perdida":0.6759903137,"costo_perdida":0.1013985471,"costo_reparacion":0.0},{"panel_id":28,"estado_predicho":"Normal","energia_perdida":1.9636817766,"costo_perdida":0.2945522665,"costo_reparacion":0.0},{"panel_id":22,"estado_predicho":"Normal","energia_perdida":1.5399871062,"costo_perdida":0.2309980659,"costo_reparacion":0.0},{"panel_id":44,"estado_predicho":"Normal","energia_perdida":1.3990244215,"costo_perdida":0.2098536632,"costo_reparacion":0.0},{"panel_id":40,"estado_predicho":"Normal","energia_perdida":0.1569127627,"costo_perdida":0.0235369144,"costo_reparacion":0.0},{"panel_id":37,"estado_predicho":"Falla","energia_perdida":14.5740589077,"costo_perdida":2.1861088361,"costo_reparacion":127.504438614},{"panel_id":5,"estado_predicho":"Normal","energia_perdida":0.0287869773,"costo_perdida":0.0043180466,"costo_reparacion":0.0},{"panel_id":14,"estado_predicho":"Normal","energia_perdida":0.0961178484,"costo_perdida":0.0144176773,"costo_reparacion":0.0},{"panel_id":5,"estado_predicho":"Normal","energia_perdida":1.2317023288,"costo_perdida":0.1847553493,"costo_reparacion":0.0},{"panel_id":16,"estado_predicho":"Normal","energia_perdida":0.7763398524,"costo_perdida":0.1164509779,"costo_reparacion":0.0},{"panel_id":33,"estado_predicho":"Falla","energia_perdida":1.8107012839,"costo_perdida":0.2716051926,"costo_reparacion":0.0},{"panel_id":44,"estado_predicho":"Normal","energia_perdida":0.6731084298,"costo_perdida":0.1009662645,"costo_reparacion":0.0},{"panel_id":26,"estado_predicho":"Normal","energia_perdida":1.2578856936,"costo_perdida":0.188682854,"costo_reparacion":0.0},{"panel_id":29,"estado_predicho":"Normal","energia_perdida":1.1370405675,"costo_perdida":0.1705560851,"costo_reparacion":0.0},{"panel_id":35,"estado_predicho":"Normal","energia_perdida":1.8615146512,"costo_perdida":0.2792271977,"costo_reparacion":0.0},{"panel_id":37,"estado_predicho":"Normal","energia_perdida":1.0686549471,"costo_perdida":0.1602982421,"costo_reparacion":0.0}];
+
+// Mostrar paneles
+const container = document.getElementById("paneles");
+
+let normales = 0;
+let fallas = 0;
+
+data.forEach(p => {
+
+  if(p.estado_predicho === "Falla") fallas++;
+  else normales++;
+
+  const div = document.createElement("div");
+  div.className = "panel";
+
+  div.innerHTML = `
+    <h3>Panel ${p.panel_id}</h3>
+    <p style="color:${p.estado_predicho === 'Falla' ? 'red' : 'lightgreen'}">
+      ${p.estado_predicho}
+    </p>
+    <p>⚡ ${p.energia_perdida.toFixed(2)} kWh</p>
+    <p>💸 $${p.costo_perdida.toFixed(2)}</p>
+    <p>🔧 $${p.costo_reparacion.toFixed(2)}</p>
+  `;
+
+  container.appendChild(div);
+});
+
+// Gráfico
+new Chart(document.getElementById("grafico"), {
+  type: "bar",
+  data: {
+    labels: ["Normales", "Fallas"],
+    datasets: [{
+      label: "Estado",
+      data: [normales, fallas]
+    }]
+  }
+});
+
+</script>
+
+</body>
+</html>
