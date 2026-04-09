@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>Alerta Verde AI</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 body {
@@ -26,13 +25,6 @@ button {
   cursor: pointer;
 }
 
-.card {
-  background: #1e293b;
-  padding: 15px;
-  margin: 10px;
-  border-radius: 10px;
-}
-
 .panel {
   background: #1e293b;
   margin: 10px auto;
@@ -41,7 +33,6 @@ button {
   border-radius: 10px;
 }
 
-/* ALERTA PRO */
 .falla {
   border: 2px solid red;
   animation: parpadeo 1s infinite;
@@ -53,113 +44,103 @@ button {
   100% { background-color: #7f1d1d; }
 }
 </style>
-
 </head>
+
 <body>
 
 <h1>🌱 Alerta Verde AI</h1>
-<p>Monitoreo inteligente de paneles solares</p>
 
-<h2>🚨 Alertas detectadas: <span id="contador">0</span></h2>
+<h2>🚨 Alertas: <span id="contador">0</span></h2>
 
-<h2>📥 Ingresar datos</h2>
+<h2>📥 Agregar panel</h2>
 
-<input id="panel" placeholder="ID Panel">
+<input id="panel" placeholder="ID">
 <input id="ubicacion" placeholder="Ubicación">
-<input id="temperatura" placeholder="Temperatura">
+<input id="temperatura" placeholder="Temp">
 <input id="voltaje" placeholder="Voltaje">
 <input id="corriente" placeholder="Corriente">
 <input id="eficiencia" placeholder="Eficiencia">
 
 <br>
-<button onclick="analizar()">Analizar</button>
+<button onclick="agregarPanel()">➕ Agregar Panel</button>
+<button onclick="analizarTodo()">🚀 Analizar Todos</button>
 
-<h2>🚨 Resultado</h2>
-<div id="resultado"></div>
+<h2>📋 Paneles cargados</h2>
+<div id="lista"></div>
 
-<h2>📊 Historial</h2>
-<div id="historial"></div>
-
-<h2>📜 Historial de alertas</h2>
-<ul id="listaAlertas"></ul>
+<h2>🚨 Resultados</h2>
+<div id="resultados"></div>
 
 <script>
 
-// Permiso notificaciones
 if (Notification.permission !== "granted") {
   Notification.requestPermission();
 }
 
+let paneles = [];
 let totalAlertas = 0;
 
-function analizar() {
-  const panel = document.getElementById("panel").value;
-  const ubicacion = document.getElementById("ubicacion").value;
-  const temp = parseFloat(document.getElementById("temperatura").value);
-  const volt = parseFloat(document.getElementById("voltaje").value);
-  const corr = parseFloat(document.getElementById("corriente").value);
-  const eff = parseFloat(document.getElementById("eficiencia").value);
+// Agregar panel
+function agregarPanel() {
+  const p = {
+    panel: document.getElementById("panel").value,
+    ubicacion: document.getElementById("ubicacion").value,
+    temp: parseFloat(document.getElementById("temperatura").value),
+    volt: parseFloat(document.getElementById("voltaje").value),
+    corr: parseFloat(document.getElementById("corriente").value),
+    eff: parseFloat(document.getElementById("eficiencia").value)
+  };
 
-  let estado = "Normal";
+  paneles.push(p);
 
-  // Lógica de anomalía
-  if (eff < 50 || volt < 20 || temp > 60) {
-    estado = "Falla";
-  }
-
-  // Costos
-  let energia_perdida = estado === "Falla" ? (Math.random() * 15 + 5) : (Math.random() * 2);
-  let costo_perdida = energia_perdida * 0.15;
-  let reparacion = estado === "Falla" ? (Math.random() * 150 + 50) : 0;
-
-  const color = estado === "Falla" ? "red" : "lightgreen";
-
-  // ALERTAS PRO
-  if (estado === "Falla") {
-
-    totalAlertas++;
-    document.getElementById("contador").innerText = totalAlertas;
-
-    // Notificación
-    if (Notification.permission === "granted") {
-      new Notification("🚨 Alerta Verde", {
-        body: `Falla en Panel ${panel} (${ubicacion})`
-      });
-    }
-
-    // Sonido
-    let audio = new Audio("https://www.soundjay.com/buttons/beep-01a.mp3");
-    audio.play();
-
-    // Historial de alertas
-    const li = document.createElement("li");
-    li.innerText = `🚨 Panel ${panel} en ${ubicacion}`;
-    document.getElementById("listaAlertas").appendChild(li);
-  }
-
-  // Resultado principal
-  document.getElementById("resultado").innerHTML = `
-    <div class="panel ${estado === "Falla" ? "falla" : ""}">
-      <h3>Panel ${panel}</h3>
-      <p>📍 ${ubicacion}</p>
-      <p style="color:${color};">${estado}</p>
-      <p>⚡ ${energia_perdida.toFixed(2)} kWh</p>
-      <p>💸 $${costo_perdida.toFixed(2)}</p>
-      <p>🔧 $${reparacion.toFixed(2)}</p>
-    </div>
-  `;
-
-  // Historial general
   const div = document.createElement("div");
   div.className = "panel";
+  div.innerHTML = `Panel ${p.panel} - ${p.ubicacion}`;
+  document.getElementById("lista").appendChild(div);
+}
 
-  div.innerHTML = `
-    <h4>Panel ${panel}</h4>
-    <p>${ubicacion}</p>
-    <p style="color:${color};">${estado}</p>
-  `;
+// Analizar todos
+function analizarTodo() {
 
-  document.getElementById("historial").appendChild(div);
+  document.getElementById("resultados").innerHTML = "";
+
+  paneles.forEach(p => {
+
+    let estado = "Normal";
+
+    if (p.eff < 50 || p.volt < 20 || p.temp > 60) {
+      estado = "Falla";
+    }
+
+    let energia = estado === "Falla" ? (Math.random()*15+5) : (Math.random()*2);
+    let costo = energia * 0.15;
+    let reparacion = estado === "Falla" ? (Math.random()*150+50) : 0;
+
+    if (estado === "Falla") {
+      totalAlertas++;
+      document.getElementById("contador").innerText = totalAlertas;
+
+      new Notification("🚨 Falla detectada", {
+        body: `Panel ${p.panel} - ${p.ubicacion}`
+      });
+
+      new Audio("https://www.soundjay.com/buttons/beep-01a.mp3").play();
+    }
+
+    const div = document.createElement("div");
+    div.className = "panel " + (estado === "Falla" ? "falla" : "");
+
+    div.innerHTML = `
+      <h3>Panel ${p.panel}</h3>
+      <p>${p.ubicacion}</p>
+      <p style="color:${estado === "Falla" ? "red" : "lightgreen"}">${estado}</p>
+      <p>⚡ ${energia.toFixed(2)} kWh</p>
+      <p>💸 $${costo.toFixed(2)}</p>
+      <p>🔧 $${reparacion.toFixed(2)}</p>
+    `;
+
+    document.getElementById("resultados").appendChild(div);
+  });
 }
 
 </script>
